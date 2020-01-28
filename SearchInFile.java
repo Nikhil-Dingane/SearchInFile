@@ -3,7 +3,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.*;
 
-class SearchInFile
+class SearchInFile extends Thread
 {
 	File[] filelist;
 	
@@ -50,42 +50,41 @@ class SearchInFile
 	public void search(String substring) throws Exception
 	{
 		
-		String buffer=null;
 		
-		try
+		
+		for(File file:filelist)
 		{
-			System.out.println(substring);
-			for(File file:filelist)
+			if(!getFileExtension(file).toUpperCase().equals("TXT"))
 			{
-				if(!getFileExtension(file).toUpperCase().equals("TXT"))
-				{
-					continue;
-				}
-				BufferedReader br=new BufferedReader(new FileReader(file));
-				int count=0;
-				while((buffer=br.readLine())!=null)
-				{
-					
-					//System.out.println(buffer);
-					if(buffer.contains(substring))
-					{
-						count++;
-						//System.out.println(buffer+"\nline no is = "+no);
-				
-					}
-				}
-				if(count>0)
-				{
-					System.out.println("File name : "+file.getName());
-					System.out.println(substring+": "+count+" times");
-				}
-				
+				continue;
 			}
+			searchInFile(file,substring);
 			
 		}
-		catch(FileNotFoundException e)
+			
+	}
+	
+	public void searchInFile(File file,String substring) throws Exception
+	{
+		String buffer=null;
+		BufferedReader br=new BufferedReader(new FileReader(file));
+		int count=0;
+		while((buffer=br.readLine())!=null)
 		{
-			System.out.println("FIle not found");
+			
+			//System.out.println(buffer);
+			if(buffer.contains(substring))
+			{
+				count++;
+				//System.out.println(buffer+"\nline no is = "+no);
+		
+			}
+		}
+		if(count>0)
+		{
+			System.out.println("\n");
+			System.out.println("File name : "+file.getName());
+			System.out.println(substring+": "+count+" times");
 		}
 	}
 	
