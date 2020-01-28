@@ -5,57 +5,116 @@ import java.io.*;
 
 class SearchInFile
 {
-	public static void main(String[] arg) throws Exception
+	File[] filelist;
+	
+	public SearchInFile(String dirname)
 	{
-		Scanner sobj=new Scanner(System.in);
-		System.out.println("Enter directory");
-		String filename=sobj.nextLine();
-		System.out.println("Enter word or substring to search");
-		String substring=sobj.nextLine();		
-		search(substring,filename);
+		allFileList(dirname);
 	}
 	
-	public static void search(String substring,String filename) throws Exception
+	
+	public static void main(String[] arg) throws Exception
 	{
-		File[] filelist=allfilelist(src);
+		if(arg.length<2)
+		{
+			System.out.println("Invalid argument");
+			System.exit(0);
+		}
+		
+		SearchInFile obj=new SearchInFile(arg[0]);
+		
+		if(!obj.isFilesAvailable())
+		{
+			System.out.println("There is no files in given directory");
+			System.exit(0);
+		}
+		
+		for(int i=1;i<arg.length;i++)
+		{
+			obj.search(arg[i]);
+		}
+	}
+	
+	public boolean isFilesAvailable()
+	{
 		if(filelist==null)
 		{
-			System.out.println("Wrong Directory");
-			return;
+			return false;
 		}
+		else
+		{
+			return true;
+		}
+	}
+	
+	public void search(String substring) throws Exception
+	{
+		
 		String buffer=null;
-		int no=0;
+		
 		try
 		{
-			BufferedReader br=new BufferedReader(new FileReader(filename));
-			while((buffer=br.readLine())!=null)
+			System.out.println(substring);
+			for(File file:filelist)
 			{
-				no++;
-				//System.out.println(buffer);
-				if(buffer.contains(substring))
+				if(!getFileExtension(file).toUpperCase().equals("TXT"))
 				{
-					break;
-					//System.out.println(buffer+"\nline no is = "+no);
-			
+					continue;
+				}
+				BufferedReader br=new BufferedReader(new FileReader(file));
+				int count=0;
+				while((buffer=br.readLine())!=null)
+				{
+					
+					//System.out.println(buffer);
+					if(buffer.contains(substring))
+					{
+						count++;
+						//System.out.println(buffer+"\nline no is = "+no);
+				
+					}
+				}
+				if(count>0)
+				{
+					System.out.println("File name : "+file.getName());
+					System.out.println(substring+": "+count+" times");
 				}
 				
 			}
+			
 		}
 		catch(FileNotFoundException e)
 		{
 			System.out.println("FIle not found");
 		}
-		System.out.println(buffer+"\nline no is = "+no);
 	}
 	
-	private File[] allFileList(String dirname)
+	private static String getFileExtension(File file) 
+	{
+        String fileName = file.getName();
+        if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
+		{
+			return fileName.substring(fileName.lastIndexOf(".")+1);
+		}
+        else
+		{
+			return "";
+		}
+    }
+	
+	private void allFileList(String dirname)
 	{
 		File dir=new File(dirname);
 		if(dir==null)
 		{
-			return null;
+			return;
 		}
-		File[] list=dir.listFiles();
-		return list;
+		
+		filelist=dir.listFiles();
+		
+		if(filelist==null)
+		{
+			System.out.println("Wrong Directory");
+		}
 	}
 }
