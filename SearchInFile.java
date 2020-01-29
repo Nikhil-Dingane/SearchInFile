@@ -6,12 +6,22 @@ import java.io.*;
 class SearchInFile extends Thread
 {
 	File[] filelist;
+	HashMap<String,Integer> worddictionary;
 	
-	public SearchInFile(String dirname)
+	public SearchInFile(String arg[])
 	{
-		allFileList(dirname);
+		allFileList(arg[0]);
+		worddictionary=new HashMap<String,Integer>();
+		setWords(arg);
 	}
 	
+	public void setWords(String arg[])
+	{
+		for(int i=1;i<arg.length;i++)
+		{
+			worddictionary.put(arg[i],0);
+		}
+	}
 	
 	public static void main(String[] arg) throws Exception
 	{
@@ -21,18 +31,14 @@ class SearchInFile extends Thread
 			System.exit(0);
 		}
 		
-		SearchInFile obj=new SearchInFile(arg[0]);
+		SearchInFile obj=new SearchInFile(arg);
 		
 		if(!obj.isFilesAvailable())
 		{
 			System.out.println("There is no files in given directory");
 			System.exit(0);
 		}
-		
-		for(int i=1;i<arg.length;i++)
-		{
-			obj.search(arg[i]);
-		}
+		obj.search();
 	}
 	
 	public boolean isFilesAvailable()
@@ -47,7 +53,7 @@ class SearchInFile extends Thread
 		}
 	}
 	
-	public void search(String substring) throws Exception
+	public void search() throws Exception
 	{
 		
 		
@@ -58,33 +64,47 @@ class SearchInFile extends Thread
 			{
 				continue;
 			}
-			searchInFile(file,substring);
 			
+			setWordCountToZero();
+			
+			searchInFile(file);
 		}
 			
 	}
 	
-	public void searchInFile(File file,String substring) throws Exception
+	public void searchInFile(File file) throws Exception
 	{
 		String buffer=null;
 		BufferedReader br=new BufferedReader(new FileReader(file));
-		int count=0;
+		
 		while((buffer=br.readLine())!=null)
 		{
-			
-			//System.out.println(buffer);
-			if(buffer.contains(substring))
+			for(Map.Entry<String,Integer> entry : worddictionary.entrySet())
 			{
-				count++;
-				//System.out.println(buffer+"\nline no is = "+no);
-		
+				if(buffer.contains(entry.getKey()))
+				{
+					worddictionary.put(entry.getKey(),entry.getValue()+1);
+				}
 			}
 		}
-		if(count>0)
+		
+		displayWordCount(file.getName());
+	}
+	
+	public void displayWordCount(String fileName)
+	{
+		for(Map.Entry<String,Integer> entry : worddictionary.entrySet())
 		{
-			System.out.println("\n");
-			System.out.println("File name : "+file.getName());
-			System.out.println(substring+": "+count+" times");
+			System.out.println("\nFile name : "+fileName);
+			System.out.println(entry.getKey()+" : "+entry.getValue()+" times ");
+		}
+	}
+	
+	public void setWordCountToZero()
+	{
+		for(Map.Entry<String,Integer> entry : worddictionary.entrySet())
+		{
+			worddictionary.put(entry.getKey(),0);
 		}
 	}
 	
