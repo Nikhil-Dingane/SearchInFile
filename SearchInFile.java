@@ -3,11 +3,17 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.*;
 
-class SearchInFile extends Thread
+class SearchInFile
 {
-	File[] filelist;
-	HashMap<String,Integer> worddictionary;
 	
+	// This array will store the list of all files of specified directory
+	File[] filelist;
+	
+	// This HashMap is used to store words and their frequecy
+	HashMap<String,Integer> worddictionary;
+
+	// Default constructor
+	// This will fill the files in array and will store all the words in HashMap with the frequecy 0.
 	public SearchInFile(String arg[])
 	{
 		allFileList(arg[0]);
@@ -15,6 +21,7 @@ class SearchInFile extends Thread
 		setWords(arg);
 	}
 	
+	//This is helper method to add words in HashMap with value 0
 	public void setWords(String arg[])
 	{
 		for(int i=1;i<arg.length;i++)
@@ -23,6 +30,10 @@ class SearchInFile extends Thread
 		}
 	}
 	
+	// Entry point function
+	// This function will accept the command line arguments from user and 
+	//create object of SearchInFile class which will initialize all things and 
+	//then it will call search() method
 	public static void main(String[] arg) throws Exception
 	{
 		if(arg.length<2)
@@ -38,9 +49,21 @@ class SearchInFile extends Thread
 			System.out.println("There is no files in given directory");
 			System.exit(0);
 		}
+		
+		long endTime;
+		long startTime;
+		
+		startTime=System.nanoTime();
+		
 		obj.search();
+		
+		endTime=System.nanoTime();
+		
+		System.out.println("Required time for searching is : "+ (endTime-startTime)/1000000000+" seconds");
 	}
 	
+	
+	// This is the helper method to check wheather there are files available or not in specified directory
 	public boolean isFilesAvailable()
 	{
 		if(filelist==null)
@@ -53,10 +76,11 @@ class SearchInFile extends Thread
 		}
 	}
 	
+	//This method is used search the words within the files of directory
+	// This method will get the a file from the FileList array one by one and
+	// If the file is text file then it will passed to searchInFile() method
 	public void search() throws Exception
-	{
-		
-		
+	{	
 		
 		for(File file:filelist)
 		{
@@ -72,6 +96,9 @@ class SearchInFile extends Thread
 			
 	}
 	
+	// This method will accept the filename and will read the file line by line
+	// For each line it will also iterate the HashMap and will check that wheather the words are present the line or not
+	// If the words are present then there assocating value will increased by one for each occurance.
 	public void searchInFile(File file) throws Exception
 	{
 		String buffer=null;
@@ -91,6 +118,7 @@ class SearchInFile extends Thread
 		displayWordCount(file.getName());
 	}
 	
+	// This method is helper method of searchInFile() method and will be called to display frequecy of words
 	public void displayWordCount(String fileName)
 	{
 		for(Map.Entry<String,Integer> entry : worddictionary.entrySet())
@@ -100,6 +128,7 @@ class SearchInFile extends Thread
 		}
 	}
 	
+	// This method will set assocative values of all the words to 0
 	public void setWordCountToZero()
 	{
 		for(Map.Entry<String,Integer> entry : worddictionary.entrySet())
@@ -108,6 +137,7 @@ class SearchInFile extends Thread
 		}
 	}
 	
+	// This method will return extention of given file
 	private static String getFileExtension(File file) 
 	{
         String fileName = file.getName();
@@ -121,6 +151,7 @@ class SearchInFile extends Thread
 		}
     }
 	
+	// This method will fill the array filelist with files of specified directory.
 	private void allFileList(String dirname)
 	{
 		File dir=new File(dirname);
