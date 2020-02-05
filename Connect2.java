@@ -14,14 +14,12 @@ class Connect2
 			Connection myconnection=DriverManager.getConnection(dbUrl,username,password);
 			myconnection.setAutoCommit(false);
 			
-			PreparedStatement pstmt=myconnection.prepareStatement("INSERT INTO `WordCount`(`Word`, `Frequency`) VALUES (?,?)");
-			
 			Statement stmt=myconnection.createStatement();
 			
-			/*stmt.executeUpdate("INSERT INTO `WordCount`(`Word`, `Frequency`) VALUES ('nikhil',12)");
+			stmt.executeUpdate("INSERT INTO `WordCount`(`Word`, `Frequency`) VALUES ('nikhil',12)");
 			stmt.executeUpdate("INSERT INTO `WordCount`(`Word`, `Frequency`) VALUES ('sri',34)");
 			stmt.executeUpdate("INSERT INTO `WordCount`(`Word`, `Frequency`) VALUES ('new',36)");
-			myconnection.commit();*/
+			myconnection.commit();
 		
 			stmt.executeUpdate("UPDATE WordCount SET Frequency=Frequency+1 WHERE Word='nikhil'");
 			myconnection.commit();
