@@ -17,28 +17,24 @@ class Connect2
 			PreparedStatement pstmt=myconnection.prepareStatement("INSERT INTO `WordCount`(`Word`, `Frequency`) VALUES (?,?)");
 			
 			Statement stmt=myconnection.createStatement();
-			try
-			{
-				stmt.executeUpdate("CREATE TABLE WordCount(Word varchar(255),Frequency integer, UNIQUE KEY(Word));");
-			}
-			catch(MySQLSyntaxErrorException e)
-			{
-				stmt.executeUpdate("truncate table WordCount");
-				System.out.println("Table is already exist");
-			}
-			myconnection.commit();
-			for(int i=0;i<=100;i++)
-			{
-				pstmt.setInt(2,i);
-				pstmt.setString(1,"Krishagni"+i);
-				pstmt.execute();
-			}	
 			
+			/*stmt.executeUpdate("INSERT INTO `WordCount`(`Word`, `Frequency`) VALUES ('nikhil',12)");
+			stmt.executeUpdate("INSERT INTO `WordCount`(`Word`, `Frequency`) VALUES ('sri',34)");
+			stmt.executeUpdate("INSERT INTO `WordCount`(`Word`, `Frequency`) VALUES ('new',36)");
+			myconnection.commit();*/
+		
+			stmt.executeUpdate("UPDATE WordCount SET Frequency=Frequency+1 WHERE Word='nikhil'");
 			myconnection.commit();
-			//stmt.executeUpdate("INSERT INTO `WordCount`(`Word`, `Frequency`) VALUES ('dfasd',2)");	
 			
-			myconnection.commit();
+			ResultSet rs=stmt.executeQuery("select * from WordCount where Word='nikhil'");
+			
+			while(rs.next())
+			{
+				System.out.println(rs.getString(1)+" "+rs.getInt(2));
+			}
+			
 			myconnection.close();
+			
 		}
 		catch(Exception e)
 		{
